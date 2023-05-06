@@ -60,16 +60,24 @@ public class FrontServlet extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             String url = request.getRequestURL().toString();
             String[] uri = request.getRequestURI().toString().split("/");
-
+            out.println("url navigateur   " + uri[uri.length - 1]);
+            String url_navigateur = uri[uri.length - 1];
             try {
-                out.println("miseo ve     " + tafiditsa);
-                out.println("<h1>Nom class " + this.MappingUrls.get(uri[uri.length - 1]).getClassName() + "</h1>");
-                out.println("Result method  " + this.MappingUrls.get(uri[uri.length - 1]).getMethod());
-                Class cls = Class.forName(this.MappingUrls.get(uri[uri.length - 1]).getClassName());
-                Method meth = cls.getMethod(this.MappingUrls.get(uri[uri.length - 1]).getMethod());
-                Object o = cls.newInstance();
-                out.println("anatiny   " + meth.invoke(o));
-
+                String nom_methode = this.MappingUrls.get(url_navigateur).getMethod();
+                for (String cle : this.MappingUrls.keySet()) {
+                    if (cle.equals(url_navigateur)) {
+                        Class cls = Class.forName(this.MappingUrls.get(url_navigateur).getClassName());
+                        Method meth = cls.getMethod(this.MappingUrls.get(url_navigateur).getMethod());
+                        Object o = cls.newInstance();
+                        out.println("<h1>Nom class " + this.MappingUrls.get(url_navigateur).getClassName() + "</h1>");
+                        out.println("Result method  " + nom_methode);
+                        out.println("anatiny   " + meth.invoke(o));
+                        // out.println("type de retour " + meth.getReturnType().getName());
+                        if (meth.getReturnType().getName().equals("etu1800.framework.ModelView")) {
+                            out.println("ModelView io");
+                        }
+                    }
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }

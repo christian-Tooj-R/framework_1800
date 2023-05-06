@@ -2,6 +2,7 @@ package etu1800.framework;
 
 import etu1800.annotation.Urls;
 import etu1800.framework.MethodAnnotation;
+import etu1800.framework.ModelView;
 
 /**
  *
@@ -15,9 +16,11 @@ public class Etudiant {
         return Nom;
     }
 
-    // @Urls(value = "test")
-    public String anarana() {
-        return "Koto";
+    @Urls(value = "test")
+    public ModelView anarana() {
+        ModelView md = new ModelView();
+        md.setView("gg");
+        return md;
     }
 
     public void setNom(String nom) {
