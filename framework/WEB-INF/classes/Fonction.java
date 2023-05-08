@@ -75,13 +75,31 @@ public class Fonction {
 
                     Method fonct;
                     fonct = cible.getMethod("set" + field[i].getName(), field[i].getType());
-                    fonct.invoke(o, "bogosy");
+                    fonct.invoke(o, 78);
                 }
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+
     }
 
+    public static Object convertirStringEnType(String valeur, Class<?> type) {
+        if (type == String.class) {
+            return valeur;
+        } else if (type == int.class || type == Integer.class) {
+            return Integer.parseInt(valeur);
+        } else if (type == double.class || type == Double.class) {
+            return Double.parseDouble(valeur);
+        } else if (type == float.class || type == Float.class) {
+            return Float.parseFloat(valeur);
+        } else if (type == long.class || type == Long.class) {
+            return Long.parseLong(valeur);
+        } else if (type == boolean.class || type == Boolean.class) {
+            return Boolean.parseBoolean(valeur);
+        } else {
+            throw new IllegalArgumentException("Type non pris en charge: " + type.getName());
+        }
+    }
 }

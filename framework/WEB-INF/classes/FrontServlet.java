@@ -77,7 +77,11 @@ public class FrontServlet extends HttpServlet {
                     if (cle.equals(url_navigateur)) {
                         out.println("Tonga ary koa ");
                         Class cls = Class.forName(this.MappingUrls.get(url_navigateur).getClassName());
+
+                        out.println("ito sa ");
                         Method meth = cls.getMethod(this.MappingUrls.get(url_navigateur).getMethod());
+
+                        out.println("tsy ito sa ");
                         Object o = cls.newInstance();
                         out.println("<h1>Nom class " + this.MappingUrls.get(url_navigateur).getClassName() + "</h1>");
                         out.println("Result method  " + nom_methode);
@@ -89,6 +93,9 @@ public class FrontServlet extends HttpServlet {
                             verifInputName(cls, request, o);
                             String etu = (String) o.getClass().getMethod("getNom").invoke(o);
                             out.println("<h1>The Nameee     " + etu + "</h1>");
+
+                            int aaa = (int) o.getClass().getMethod("getAge").invoke(o);
+                            out.println("<h1>The Ageee     " + aaa + "</h1>");
                             ModelView mv = (ModelView) meth.invoke(o);
                             // iteration de chaque cle et valeur Hashmap
                             this.addAttributeByHashmap(request, mv.getData());
@@ -116,7 +123,8 @@ public class FrontServlet extends HttpServlet {
                     if (field[i].getName().equals(paramName)) {
                         Method fonct;
                         fonct = cible.getMethod("set" + paramName, field[i].getType());
-                        fonct.invoke(o, request.getParameter(paramName));
+                        fonct.invoke(o,
+                                Fonction.convertirStringEnType(request.getParameter(paramName), field[i].getType()));
                     }
                 }
             }

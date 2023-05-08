@@ -16,18 +16,14 @@ public class Etudiant {
         return Nom;
     }
 
-    @Urls(value = "test.do")
+    @Urls(value = "test.do", argName = "thename")
     public ModelView anarana() {
+        // this.setNom(thename);
+
         ModelView md = new ModelView();
         md.setView("/Etudiant.jsp");
-
-        // if (this.getNom().equals(null)) {
         md.addItem("nom", this.getNom());
-        // } else {
-        // md.addItem("nom", this.getNom());
-        // }
-
-        md.addItem("age", 19);
+        md.addItem("age", this.getAge());
 
         return md;
     }
@@ -44,7 +40,6 @@ public class Etudiant {
         Age = age;
     }
 
-    // @Urls(value = "test2")
     public String test2() {
         return "hafakoa";
     }

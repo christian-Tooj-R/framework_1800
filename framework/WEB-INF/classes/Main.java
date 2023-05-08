@@ -18,8 +18,8 @@ public class Main {
         try {
             Fonction func = new Fonction();
             Etudiant etu = new Etudiant();
-            func.verifInputName2(etu.getClass(), "Nom", etu);
-            System.out.println("le nom     " + etu.getNom());
+            func.verifInputName2(etu.getClass(), "Age", etu);
+            System.out.println("le age     " + etu.getAge());
         } catch (Exception e) {
             e.printStackTrace();
         }
