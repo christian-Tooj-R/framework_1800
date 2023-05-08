@@ -16,10 +16,13 @@ public class Etudiant {
         return Nom;
     }
 
-    @Urls(value = "test")
+    @Urls(value = "test.do")
     public ModelView anarana() {
         ModelView md = new ModelView();
-        md.setView("gg");
+        md.setView("/Etudiant.jsp");
+        md.addItem("nom", "Mirindra");
+        md.addItem("age", 19);
+
         return md;
     }
 

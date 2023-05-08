@@ -6,6 +6,8 @@ package etu1800.framework.servlet;
 
 import etu1800.framework.Mapping;
 import etu1800.framework.MethodAnnotation;
+import etu1800.framework.ModelView;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -30,6 +32,7 @@ public class FrontServlet extends HttpServlet {
     HashMap<String, Mapping> MappingUrls;
     protected Fonction func;
     String tafiditsa = "tsisy";
+    String vue = "";
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -64,8 +67,11 @@ public class FrontServlet extends HttpServlet {
             String url_navigateur = uri[uri.length - 1];
             try {
                 String nom_methode = this.MappingUrls.get(url_navigateur).getMethod();
+                out.println("Result methodIvelany  " + nom_methode);
                 for (String cle : this.MappingUrls.keySet()) {
+                    out.println("cle tsy tonga   " + cle);
                     if (cle.equals(url_navigateur)) {
+                        out.println("Tonga ary koa ");
                         Class cls = Class.forName(this.MappingUrls.get(url_navigateur).getClassName());
                         Method meth = cls.getMethod(this.MappingUrls.get(url_navigateur).getMethod());
                         Object o = cls.newInstance();
@@ -75,12 +81,25 @@ public class FrontServlet extends HttpServlet {
                         // out.println("type de retour " + meth.getReturnType().getName());
                         if (meth.getReturnType().getName().equals("etu1800.framework.ModelView")) {
                             out.println("ModelView io");
+                            ModelView mv = (ModelView) meth.invoke(o);
+                            // iteration de chaque cle et valeur Hashmap
+                            this.addAttributeByHashmap(request, mv.getData());
+                            // dispatcher la requete
+                            RequestDispatcher dispatcher = request.getRequestDispatcher(mv.getView());
+                            dispatcher.forward(request, response);
                         }
                     }
                 }
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    protected void addAttributeByHashmap(HttpServletRequest request, HashMap<String, Object> hmap) {
+        for (String cle : hmap.keySet()) {
+            request.setAttribute(cle, hmap.get(cle));
         }
     }
 
