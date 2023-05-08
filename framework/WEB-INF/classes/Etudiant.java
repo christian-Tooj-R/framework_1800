@@ -20,7 +20,13 @@ public class Etudiant {
     public ModelView anarana() {
         ModelView md = new ModelView();
         md.setView("/Etudiant.jsp");
-        md.addItem("nom", "Mirindra");
+
+        // if (this.getNom().equals(null)) {
+        md.addItem("nom", this.getNom());
+        // } else {
+        // md.addItem("nom", this.getNom());
+        // }
+
         md.addItem("age", 19);
 
         return md;

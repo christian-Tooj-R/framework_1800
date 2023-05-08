@@ -4,6 +4,7 @@
  */
 package etu1800.framework.servlet;
 
+import etu1800.framework.Etudiant;
 import etu1800.framework.Mapping;
 import etu1800.framework.MethodAnnotation;
 import etu1800.framework.ModelView;
@@ -15,8 +16,11 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.*;
+
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.io.File;
 
 import java.util.HashMap;
@@ -79,8 +83,12 @@ public class FrontServlet extends HttpServlet {
                         out.println("Result method  " + nom_methode);
                         out.println("anatiny   " + meth.invoke(o));
                         // out.println("type de retour " + meth.getReturnType().getName());
+
                         if (meth.getReturnType().getName().equals("etu1800.framework.ModelView")) {
                             out.println("ModelView io");
+                            verifInputName(cls, request, o);
+                            String etu = (String) o.getClass().getMethod("getNom").invoke(o);
+                            out.println("<h1>The Nameee     " + etu + "</h1>");
                             ModelView mv = (ModelView) meth.invoke(o);
                             // iteration de chaque cle et valeur Hashmap
                             this.addAttributeByHashmap(request, mv.getData());
@@ -94,6 +102,45 @@ public class FrontServlet extends HttpServlet {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    protected void verifInputName(Class cible, HttpServletRequest request, Object o) {
+        try {
+            Enumeration paramNames = request.getParameterNames();
+            Field[] field = cible.getDeclaredFields();
+
+            while (paramNames.hasMoreElements()) {
+                String paramName = (String) paramNames.nextElement();
+                for (int i = 0; i < field.length; i++) {
+                    if (field[i].getName().equals(paramName)) {
+                        Method fonct;
+                        fonct = cible.getMethod("set" + paramName, field[i].getType());
+                        fonct.invoke(o, request.getParameter(paramName));
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void verifInputName2(Class cible, String champ, Object o) {
+        try {
+            Field[] field = cible.getDeclaredFields();
+
+            for (int i = 0; i < field.length; i++) {
+                if (field[i].getName().equals(champ)) {
+
+                    Method fonct;
+                    fonct = cible.getMethod("set" + field[i].getName(), field[i].getType());
+                    fonct.invoke(o, "bogosy");
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

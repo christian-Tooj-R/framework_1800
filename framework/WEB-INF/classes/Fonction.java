@@ -66,4 +66,22 @@ public class Fonction {
         return resultat;
     }
 
+    public void verifInputName2(Class cible, String champ, Object o) {
+        try {
+            Field[] field = cible.getDeclaredFields();
+
+            for (int i = 0; i < field.length; i++) {
+                if (field[i].getName().equals(champ)) {
+
+                    Method fonct;
+                    fonct = cible.getMethod("set" + field[i].getName(), field[i].getType());
+                    fonct.invoke(o, "bogosy");
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

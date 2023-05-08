@@ -16,21 +16,10 @@ public class Main {
         // 10.1_ApacheTomcat10\\webapps\\framework\\WEB-INF\\classes\\");
         // System.out.println(cls.size());
         try {
-            File file = new File(
-                    "C:\\Program Files\\ApacheSoftwareFoundation\\Tomcat 10.1_ApacheTomcat10\\webapps\\framework\\WEB-INF\\classes\\");
             Fonction func = new Fonction();
-            HashMap<String, Mapping> MappingUrls = func.tout_fichier(
-                    "C:\\Program Files\\ApacheSoftwareFoundation\\Tomcat 10.1_ApacheTomcat10\\webapps\\framework\\WEB-INF\\classes\\",
-                    file, new HashMap<String, Mapping>());
-
-            System.out.println("---------------------------------------------------------------------------");
-            System.out.println("tailleur   " + MappingUrls.size());
-            System.out.println("<h1>Nom class " + MappingUrls.get("test").getClassName() + "</h1>");
-            System.out.println("Result method  " + MappingUrls.get("test").getMethod());
-            for (String i : MappingUrls.keySet()) {
-                System.out.println("Keysettt   " + i);
-            }
-
+            Etudiant etu = new Etudiant();
+            func.verifInputName2(etu.getClass(), "Nom", etu);
+            System.out.println("le nom     " + etu.getNom());
         } catch (Exception e) {
             e.printStackTrace();
         }
