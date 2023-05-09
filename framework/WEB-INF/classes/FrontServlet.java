@@ -70,61 +70,14 @@ public class FrontServlet extends HttpServlet {
             out.println("url navigateur   " + uri[uri.length - 1]);
             String url_navigateur = uri[uri.length - 1];
             try {
+                Fonction function = new Fonction();
                 String nom_methode = this.MappingUrls.get(url_navigateur).getMethod();
                 out.println("Result methodIvelany  " + nom_methode);
-                this.rules(this.MappingUrls, request, response, url_navigateur);
+                // this.rules(this.MappingUrls, request, response, url_navigateur);
+                function.rules(this.MappingUrls, request, response, url_navigateur);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
-    }
-
-    protected void rules(HashMap<String, Mapping> mapping, HttpServletRequest request, HttpServletResponse response,
-            String url_navigateur)
-            throws Exception {
-        for (String cle : mapping.keySet()) {
-            if (cle.equals(url_navigateur)) {
-                Class cls = Class.forName(mapping.get(url_navigateur).getClassName());
-
-                Method meth = cls.getMethod(mapping.get(url_navigateur).getMethod());
-
-                Object o = cls.newInstance();
-
-                if (meth.getReturnType().getName().equals("etu1800.framework.ModelView")) {
-                    verifInputName(cls, request, o);
-                    String etu = (String) o.getClass().getMethod("getNom").invoke(o);
-                    int aaa = (int) o.getClass().getMethod("getAge").invoke(o);
-
-                    ModelView mv = (ModelView) meth.invoke(o);
-                    // iteration de chaque cle et valeur Hashmap
-                    this.addAttributeByHashmap(request, mv.getData());
-                    // dispatcher la requete
-                    RequestDispatcher dispatcher = request.getRequestDispatcher(mv.getView());
-                    dispatcher.forward(request, response);
-                }
-            }
-        }
-    }
-
-    protected void verifInputName(Class cible, HttpServletRequest request, Object o) {
-        try {
-            Enumeration paramNames = request.getParameterNames();
-            Field[] field = cible.getDeclaredFields();
-
-            while (paramNames.hasMoreElements()) {
-                String paramName = (String) paramNames.nextElement();
-                for (int i = 0; i < field.length; i++) {
-                    if (field[i].getName().equals(paramName)) {
-                        Method fonct;
-                        fonct = cible.getMethod("set" + paramName, field[i].getType());
-                        fonct.invoke(o,
-                                Fonction.convertirStringEnType(request.getParameter(paramName), field[i].getType()));
-                    }
-                }
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
@@ -132,26 +85,6 @@ public class FrontServlet extends HttpServlet {
         for (String cle : hmap.keySet()) {
             request.setAttribute(cle, hmap.get(cle));
         }
-    }
-
-    public static List<Class<?>> getClassesInPackage(String packageName) {
-        List<Class<?>> classes = new ArrayList<>();
-        try {
-            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-            String path = packageName.replace('.', '/');
-            for (java.net.URL resource : java.util.Collections.list(classLoader.getResources(path))) {
-                for (String file : new java.io.File(resource.toURI()).list()) {
-                    if (file.endsWith(".class")) {
-                        String className = packageName + '.' + file.substring(0, file.length() - 6);
-                        Class<?> clazz = Class.forName(className);
-                        classes.add(clazz);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return classes;
     }
 
     /**

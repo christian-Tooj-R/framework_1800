@@ -11,7 +11,11 @@ import java.lang.reflect.*;
 import etu1800.annotation.*;
 import java.util.*;
 import java.util.regex.Pattern;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
+import jakarta.servlet.*;
 import etu1800.framework.*;
 
 /**
@@ -85,6 +89,28 @@ public class Fonction {
 
     }
 
+    protected void verifInputName(Class cible, HttpServletRequest request, Object o) {
+        try {
+            Enumeration paramNames = request.getParameterNames();
+            Field[] field = cible.getDeclaredFields();
+
+            while (paramNames.hasMoreElements()) {
+                String paramName = (String) paramNames.nextElement();
+                for (int i = 0; i < field.length; i++) {
+                    if (field[i].getName().equals(paramName)) {
+                        Method fonct;
+                        fonct = cible.getMethod("set" + paramName, field[i].getType());
+                        fonct.invoke(o,
+                                Fonction.convertirStringEnType(request.getParameter(paramName), field[i].getType()));
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static Object convertirStringEnType(String valeur, Class<?> type) {
         if (type == String.class) {
             return valeur;
@@ -102,4 +128,38 @@ public class Fonction {
             throw new IllegalArgumentException("Type non pris en charge: " + type.getName());
         }
     }
+
+    public void rules(HashMap<String, Mapping> mapping, HttpServletRequest request, HttpServletResponse response,
+            String url_navigateur)
+            throws Exception {
+        for (String cle : mapping.keySet()) {
+            if (cle.equals(url_navigateur)) {
+                Class cls = Class.forName(mapping.get(url_navigateur).getClassName());
+
+                Method meth = cls.getMethod(mapping.get(url_navigateur).getMethod());
+
+                Object o = cls.newInstance();
+
+                if (meth.getReturnType().getName().equals("etu1800.framework.ModelView")) {
+                    verifInputName(cls, request, o);
+                    String etu = (String) o.getClass().getMethod("getNom").invoke(o);
+                    int aaa = (int) o.getClass().getMethod("getAge").invoke(o);
+
+                    ModelView mv = (ModelView) meth.invoke(o);
+                    // iteration de chaque cle et valeur Hashmap
+                    this.addAttributeByHashmap(request, mv.getData());
+                    // dispatcher la requete
+                    RequestDispatcher dispatcher = request.getRequestDispatcher(mv.getView());
+                    dispatcher.forward(request, response);
+                }
+            }
+        }
+    }
+
+    protected void addAttributeByHashmap(HttpServletRequest request, HashMap<String, Object> hmap) {
+        for (String cle : hmap.keySet()) {
+            request.setAttribute(cle, hmap.get(cle));
+        }
+    }
+
 }
