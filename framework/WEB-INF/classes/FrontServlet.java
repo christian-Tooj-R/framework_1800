@@ -72,42 +72,36 @@ public class FrontServlet extends HttpServlet {
             try {
                 String nom_methode = this.MappingUrls.get(url_navigateur).getMethod();
                 out.println("Result methodIvelany  " + nom_methode);
-                for (String cle : this.MappingUrls.keySet()) {
-                    out.println("cle tsy tonga   " + cle);
-                    if (cle.equals(url_navigateur)) {
-                        out.println("Tonga ary koa ");
-                        Class cls = Class.forName(this.MappingUrls.get(url_navigateur).getClassName());
-
-                        out.println("ito sa ");
-                        Method meth = cls.getMethod(this.MappingUrls.get(url_navigateur).getMethod());
-
-                        out.println("tsy ito sa ");
-                        Object o = cls.newInstance();
-                        out.println("<h1>Nom class " + this.MappingUrls.get(url_navigateur).getClassName() + "</h1>");
-                        out.println("Result method  " + nom_methode);
-                        out.println("anatiny   " + meth.invoke(o));
-                        // out.println("type de retour " + meth.getReturnType().getName());
-
-                        if (meth.getReturnType().getName().equals("etu1800.framework.ModelView")) {
-                            out.println("ModelView io");
-                            verifInputName(cls, request, o);
-                            String etu = (String) o.getClass().getMethod("getNom").invoke(o);
-                            out.println("<h1>The Nameee     " + etu + "</h1>");
-
-                            int aaa = (int) o.getClass().getMethod("getAge").invoke(o);
-                            out.println("<h1>The Ageee     " + aaa + "</h1>");
-                            ModelView mv = (ModelView) meth.invoke(o);
-                            // iteration de chaque cle et valeur Hashmap
-                            this.addAttributeByHashmap(request, mv.getData());
-                            // dispatcher la requete
-                            RequestDispatcher dispatcher = request.getRequestDispatcher(mv.getView());
-                            dispatcher.forward(request, response);
-                        }
-                    }
-                }
-
+                this.rules(this.MappingUrls, request, response, url_navigateur);
             } catch (Exception e) {
                 e.printStackTrace();
+            }
+        }
+    }
+
+    protected void rules(HashMap<String, Mapping> mapping, HttpServletRequest request, HttpServletResponse response,
+            String url_navigateur)
+            throws Exception {
+        for (String cle : mapping.keySet()) {
+            if (cle.equals(url_navigateur)) {
+                Class cls = Class.forName(mapping.get(url_navigateur).getClassName());
+
+                Method meth = cls.getMethod(mapping.get(url_navigateur).getMethod());
+
+                Object o = cls.newInstance();
+
+                if (meth.getReturnType().getName().equals("etu1800.framework.ModelView")) {
+                    verifInputName(cls, request, o);
+                    String etu = (String) o.getClass().getMethod("getNom").invoke(o);
+                    int aaa = (int) o.getClass().getMethod("getAge").invoke(o);
+
+                    ModelView mv = (ModelView) meth.invoke(o);
+                    // iteration de chaque cle et valeur Hashmap
+                    this.addAttributeByHashmap(request, mv.getData());
+                    // dispatcher la requete
+                    RequestDispatcher dispatcher = request.getRequestDispatcher(mv.getView());
+                    dispatcher.forward(request, response);
+                }
             }
         }
     }
@@ -126,24 +120,6 @@ public class FrontServlet extends HttpServlet {
                         fonct.invoke(o,
                                 Fonction.convertirStringEnType(request.getParameter(paramName), field[i].getType()));
                     }
-                }
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void verifInputName2(Class cible, String champ, Object o) {
-        try {
-            Field[] field = cible.getDeclaredFields();
-
-            for (int i = 0; i < field.length; i++) {
-                if (field[i].getName().equals(champ)) {
-
-                    Method fonct;
-                    fonct = cible.getMethod("set" + field[i].getName(), field[i].getType());
-                    fonct.invoke(o, "bogosy");
                 }
             }
 
