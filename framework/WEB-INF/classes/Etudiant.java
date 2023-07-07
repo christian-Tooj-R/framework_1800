@@ -1,6 +1,6 @@
 package etu1800.framework;
 
-import etu1800.annotation.Urls;
+import etu1800.annotation.*;
 import etu1800.framework.MethodAnnotation;
 import etu1800.framework.ModelView;
 
@@ -8,6 +8,7 @@ import etu1800.framework.ModelView;
  *
  * @author Christian
  */
+@Singleton()
 public class Etudiant {
     String Nom;
     int Age;
@@ -16,9 +17,10 @@ public class Etudiant {
         return Nom;
     }
 
-    @Urls(value = "test.do", argName = "thename")
+    @Urls(value = "test.do", argName = "")
     public ModelView anarana() {
-        // this.setNom(thename);
+      //  this.setNom(thename);
+      //  this.setAge(taona);
 
         ModelView md = new ModelView();
         md.setView("/Etudiant.jsp");
@@ -28,6 +30,7 @@ public class Etudiant {
         return md;
     }
 
+    
     public void setNom(String nom) {
         Nom = nom;
     }

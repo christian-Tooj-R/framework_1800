@@ -15,7 +15,7 @@ Entrer l'Age : <input type="number" name="Age">
 </form>
 <br><hr>
 <form action="framework/test.do"> 
-Entrer le Nom : <input type="text" name="anarana"> 
+Entrer le Nom : <input type="text" name="thename"> 
 Entrer l'Age : <input type="number" name="taona"> 
 <input type="submit" value="Valider"> 
 </form>

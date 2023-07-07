@@ -35,8 +35,8 @@ public class FrontServlet extends HttpServlet {
 
     HashMap<String, Mapping> MappingUrls;
     protected Fonction func;
-    String tafiditsa = "tsisy";
-    String vue = "";
+    HashMap<Class,Object> all_instance;
+
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -56,6 +56,7 @@ public class FrontServlet extends HttpServlet {
         try {
             MappingUrls = function.tout_fichier(chemin_de_l_application + "WEB-INF\\classes\\", file,
                     new HashMap<String, Mapping>());
+            all_instance = function.addInstance(MappingUrls);     
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -72,11 +73,22 @@ public class FrontServlet extends HttpServlet {
             try {
                 Fonction function = new Fonction();
                 String nom_methode = this.MappingUrls.get(url_navigateur).getMethod();
-                out.println("Result methodIvelany  " + nom_methode);
-                // this.rules(this.MappingUrls, request, response, url_navigateur);
-                function.rules(this.MappingUrls, request, response, url_navigateur);
+                
+                function.rules(this.all_instance,this.MappingUrls, request, response, url_navigateur);
             } catch (Exception e) {
                 e.printStackTrace();
+                // Capture de l'exception
+                Throwable t = e;
+                // Affichage de la trace de la pile d'exceptions
+                out.println("<pre>");
+                while (t != null) {
+                    out.println(t.toString());
+                    for (StackTraceElement element : t.getStackTrace()) {
+                        out.println("&nbsp;&nbsp;&nbsp;&nbsp;" + element.toString());
+                    }
+                    t = t.getCause();
+                }
+                out.println("</pre>");
             }
         }
     }
